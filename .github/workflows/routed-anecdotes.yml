@@ -1,9 +1,8 @@
-name: routed anecdotes tests
+name: Routed anecdotes tests
 
 on:
   push:
-    branches:
-      - xmain
+    branches: [main]
 
 jobs:
   test:

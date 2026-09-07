@@ -8,6 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import NotFound from './components/NotFound'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import useNotificationStore from './stores/notificationStore'
 
 const Navigation = ({ user, onLogout }) => (
   <nav>
@@ -74,9 +75,9 @@ const NewBlog = ({ createBlog }) => (
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
   const navigate = useNavigate()
+  const notification = useNotificationStore((state) => state.notification)
+  const notify = useNotificationStore((state) => state.notify)
 
   useEffect(() => {
     blogService.getAll().then(setBlogs)
@@ -91,16 +92,6 @@ const App = () => {
     }
   }, [])
 
-  const notify = (message) => {
-    setNotification(message)
-    setTimeout(() => setNotification(null), 5000)
-  }
-
-  const notifyError = (message) => {
-    setErrorMessage(message)
-    setTimeout(() => setErrorMessage(null), 5000)
-  }
-
   const handleLogin = async (credentials) => {
     try {
       const loggedUser = await loginService.login(credentials)
@@ -110,7 +101,7 @@ const App = () => {
       navigate('/')
     } catch (error) {
       console.error('wrong credentials', error)
-      notifyError('Wrong username or password')
+      notify('Wrong username or password', 'error')
     }
   }
 
@@ -129,7 +120,7 @@ const App = () => {
       navigate(`/blogs/${newBlog.id}`)
     } catch (error) {
       console.error('failed to create blog', error)
-      notifyError('Failed to create blog')
+      notify('Failed to create blog', 'error')
     }
   }
 
@@ -145,7 +136,7 @@ const App = () => {
       returnedBlog.user = blogToUpdate.user
       setBlogs(blogs.map((blog) => (blog.id !== returnedBlog.id ? blog : returnedBlog)))
     } catch (error) {
-      notifyError('Failed to like blog')
+      notify('Failed to like blog', 'error')
     }
   }
 
@@ -158,15 +149,18 @@ const App = () => {
       notify(`Deleted blog: ${blogToDelete.title}`)
       navigate('/')
     } catch (error) {
-      notifyError('Failed to delete blog')
+      notify('Failed to delete blog', 'error')
     }
   }
 
   return (
     <div>
       <Navigation user={user} onLogout={handleLogout} />
-      <Notification message={notification} />
-      <ErrorNotification message={errorMessage} />
+      {notification?.type === 'error' ? (
+        <ErrorNotification message={notification.message} />
+      ) : (
+        <Notification message={notification?.message ?? null} />
+      )}
 
       <ErrorBoundary>
         <Routes>

@@ -1,0 +1,37 @@
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "meitsi2",
+  "name": "testaaja",
+  "password": "salasana"
+}
+
+###
+
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "meitsi2",
+  "password": "salasana"
+}
+
+
+### Token test
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC
+  "title": "VILLI-testiblogi",
+  "author": "Postman",
+  "url": "https://example.com/testiblogi",
+  "likes": 3
+}
+
+
+### Deletion test
+
+DELETE http://localhost:3003/api/blogs/683b6207b316f700a5ce836f
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9

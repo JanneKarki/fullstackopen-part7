@@ -40,7 +40,7 @@ describe('Blog component', () => {
     await user.click(viewButton)
 
     expect(screen.getByText('http://example.com/blog')).toBeDefined()
-    expect(screen.getByText('likes 5')).toBeDefined()
+    expect(screen.getByTestId('likes-count')).toHaveTextContent('5')
     expect(screen.getByText('Kent Beck'),{ exact: false }).toBeDefined()
   })
 

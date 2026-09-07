@@ -28,12 +28,14 @@ const Blog = ({ blog, onLike, onDelete, currentUser, singleView = false }) => {
       </div>
       <div>{blog.url}</div>
       <div>
-      likes <span data-testid="likes-count">{blog.likes}</span>{' '}
+        likes <span data-testid="likes-count">{blog.likes}</span>{' '}
         {currentUser && <button onClick={onLike}>like</button>}
       </div>
       <div>{blog.user?.name}</div>
       {isOwner && (
-        <button data-testid="remove-button" onClick={onDelete}>remove</button>
+        <button data-testid="remove-button" onClick={onDelete}>
+          remove
+        </button>
       )}
     </div>
   )

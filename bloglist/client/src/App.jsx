@@ -11,11 +11,14 @@ import loginService from './services/login'
 
 const Navigation = ({ user, onLogout }) => (
   <nav>
-    <Link to="/">blogs</Link>{' '}
-    {user && <Link to="/blogs/new">new blog</Link>}{' '}
-    {user
-      ? <span>{user.name} logged in <button onClick={onLogout}>logout</button></span>
-      : <Link to="/login">login</Link>}
+    <Link to="/">blogs</Link> {user && <Link to="/blogs/new">new blog</Link>}{' '}
+    {user ? (
+      <span>
+        {user.name} logged in <button onClick={onLogout}>logout</button>
+      </span>
+    ) : (
+      <Link to="/login">login</Link>
+    )}
   </nav>
 )
 
@@ -25,7 +28,7 @@ const BlogList = ({ blogs, user, onLike, onDelete }) => (
     {blogs
       .slice()
       .sort((a, b) => b.likes - a.likes)
-      .map(blog => (
+      .map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
@@ -39,7 +42,7 @@ const BlogList = ({ blogs, user, onLike, onDelete }) => (
 
 const BlogDetail = ({ blogs, user, onLike, onDelete }) => {
   const { id } = useParams()
-  const blog = blogs.find(blog => blog.id === id)
+  const blog = blogs.find((blog) => blog.id === id)
 
   if (!blog) return <NotFound />
 
@@ -140,7 +143,7 @@ const App = () => {
         likes: blogToUpdate.likes + 1
       })
       returnedBlog.user = blogToUpdate.user
-      setBlogs(blogs.map(blog => blog.id !== returnedBlog.id ? blog : returnedBlog))
+      setBlogs(blogs.map((blog) => (blog.id !== returnedBlog.id ? blog : returnedBlog)))
     } catch (error) {
       notifyError('Failed to like blog')
     }
@@ -151,7 +154,7 @@ const App = () => {
 
     try {
       await blogService.remove(blogToDelete.id)
-      setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+      setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id))
       notify(`Deleted blog: ${blogToDelete.title}`)
       navigate('/')
     } catch (error) {
@@ -167,10 +170,26 @@ const App = () => {
 
       <ErrorBoundary>
         <Routes>
-          <Route path="/" element={<BlogList blogs={blogs} user={user} onLike={handleLike} onDelete={handleDelete} />} />
-          <Route path="/login" element={user ? <Navigate replace to="/" /> : <Login onLogin={handleLogin} />} />
-          <Route path="/blogs/new" element={user ? <NewBlog createBlog={createBlog} /> : <Navigate replace to="/login" />} />
-          <Route path="/blogs/:id" element={<BlogDetail blogs={blogs} user={user} onLike={handleLike} onDelete={handleDelete} />} />
+          <Route
+            path="/"
+            element={
+              <BlogList blogs={blogs} user={user} onLike={handleLike} onDelete={handleDelete} />
+            }
+          />
+          <Route
+            path="/login"
+            element={user ? <Navigate replace to="/" /> : <Login onLogin={handleLogin} />}
+          />
+          <Route
+            path="/blogs/new"
+            element={user ? <NewBlog createBlog={createBlog} /> : <Navigate replace to="/login" />}
+          />
+          <Route
+            path="/blogs/:id"
+            element={
+              <BlogDetail blogs={blogs} user={user} onLike={handleLike} onDelete={handleDelete} />
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ErrorBoundary>

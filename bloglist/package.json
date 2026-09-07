@@ -4,6 +4,8 @@
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "build": "npm run build --prefix client",
+    "format": "npm run format --prefix client",
+    "format:check": "npm run format:check --prefix client",
     "start": "npm start --prefix server",
     "test:server": "npm test --prefix server",
     "test:client": "npm test --prefix client",

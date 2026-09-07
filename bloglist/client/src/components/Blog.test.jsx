@@ -5,7 +5,6 @@ import { describe, test, beforeEach, expect, vi } from 'vitest'
 import BlogForm from './BlogForm'
 import { MemoryRouter } from 'react-router-dom'
 
-
 describe('Blog component', () => {
   let blog
   let currentUser
@@ -28,13 +27,20 @@ describe('Blog component', () => {
   })
 
   test('renders blog title', () => {
-    render(<MemoryRouter><Blog blog={blog} currentUser={currentUser} /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <Blog blog={blog} currentUser={currentUser} />
+      </MemoryRouter>
+    )
     expect(screen.getByText('Test Driven Development in React', { exact: false })).toBeDefined()
   })
 
-
   test('url, likes and author after view', async () => {
-    render(<MemoryRouter><Blog blog={blog} currentUser={currentUser} /></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <Blog blog={blog} currentUser={currentUser} />
+      </MemoryRouter>
+    )
 
     const user = userEvent.setup()
     const viewButton = screen.getByText('view')
@@ -42,13 +48,17 @@ describe('Blog component', () => {
 
     expect(screen.getByText('http://example.com/blog')).toBeDefined()
     expect(screen.getByTestId('likes-count')).toHaveTextContent('5')
-    expect(screen.getByText('Kent Beck'),{ exact: false }).toBeDefined()
+    expect(screen.getByText('Kent Beck'), { exact: false }).toBeDefined()
   })
 
   test('clicking the button twice calls event hanlder twice', async () => {
     const mockHandler = vi.fn()
 
-    render(<MemoryRouter><Blog blog={blog} currentUser={currentUser} onLike={mockHandler}/></MemoryRouter>)
+    render(
+      <MemoryRouter>
+        <Blog blog={blog} currentUser={currentUser} onLike={mockHandler} />
+      </MemoryRouter>
+    )
 
     const user = userEvent.setup()
 

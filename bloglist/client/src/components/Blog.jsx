@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, onLike, onDelete, currentUser }) => {
+const Blog = ({ blog, onLike, onDelete, currentUser, singleView = false }) => {
   const [visible, setVisible] = useState(false)
 
   const isOwner = currentUser?.username === blog.user?.username
@@ -9,10 +10,10 @@ const Blog = ({ blog, onLike, onDelete, currentUser }) => {
     setVisible(!visible)
   }
 
-  if (!visible) {
+  if (!visible && !singleView) {
     return (
       <div className="blog" data-testid="blog">
-        {blog.title} {blog.author}
+        <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}
         <button onClick={toggleVisibility}>view</button>
       </div>
     )
@@ -23,12 +24,12 @@ const Blog = ({ blog, onLike, onDelete, currentUser }) => {
       <div>
         <div>{blog.title}</div>
         <div>{blog.author}</div>
-        <button onClick={toggleVisibility}>hide</button>
+        {!singleView && <button onClick={toggleVisibility}>hide</button>}
       </div>
       <div>{blog.url}</div>
       <div>
       likes <span data-testid="likes-count">{blog.likes}</span>{' '}
-        <button onClick={onLike}>like</button>
+        {currentUser && <button onClick={onLike}>like</button>}
       </div>
       <div>{blog.user?.name}</div>
       {isOwner && (

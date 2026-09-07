@@ -3,6 +3,7 @@ import Blog from './Blog'
 import userEvent from '@testing-library/user-event'
 import { describe, test, beforeEach, expect, vi } from 'vitest'
 import BlogForm from './BlogForm'
+import { MemoryRouter } from 'react-router-dom'
 
 
 describe('Blog component', () => {
@@ -27,13 +28,13 @@ describe('Blog component', () => {
   })
 
   test('renders blog title', () => {
-    render(<Blog blog={blog} currentUser={currentUser} />)
+    render(<MemoryRouter><Blog blog={blog} currentUser={currentUser} /></MemoryRouter>)
     expect(screen.getByText('Test Driven Development in React', { exact: false })).toBeDefined()
   })
 
 
   test('url, likes and author after view', async () => {
-    render(<Blog blog={blog} currentUser={currentUser} />)
+    render(<MemoryRouter><Blog blog={blog} currentUser={currentUser} /></MemoryRouter>)
 
     const user = userEvent.setup()
     const viewButton = screen.getByText('view')
@@ -47,7 +48,7 @@ describe('Blog component', () => {
   test('clicking the button twice calls event hanlder twice', async () => {
     const mockHandler = vi.fn()
 
-    render(<Blog blog={blog} currentUser={currentUser} onLike={mockHandler}/>)
+    render(<MemoryRouter><Blog blog={blog} currentUser={currentUser} onLike={mockHandler}/></MemoryRouter>)
 
     const user = userEvent.setup()
 

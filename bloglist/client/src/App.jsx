@@ -8,6 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import NotFound from './components/NotFound'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import useBlogStore from './stores/blogStore'
 import useNotificationStore from './stores/notificationStore'
 
 const Navigation = ({ user, onLogout }) => (
@@ -73,15 +74,19 @@ const NewBlog = ({ createBlog }) => (
 )
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
+  const blogs = useBlogStore((state) => state.blogs)
+  const initializeBlogs = useBlogStore((state) => state.initialize)
+  const createBlogInStore = useBlogStore((state) => state.createBlog)
+  const updateBlogInStore = useBlogStore((state) => state.updateBlog)
+  const removeBlogInStore = useBlogStore((state) => state.removeBlog)
   const notification = useNotificationStore((state) => state.notification)
   const notify = useNotificationStore((state) => state.notify)
 
   useEffect(() => {
-    blogService.getAll().then(setBlogs)
-  }, [])
+    initializeBlogs()
+  }, [initializeBlogs])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -113,9 +118,11 @@ const App = () => {
 
   const createBlog = async (blogObject) => {
     try {
-      const newBlog = await blogService.create(blogObject)
-      newBlog.user = { id: user.id, name: user.name, username: user.username }
-      setBlogs(blogs.concat(newBlog))
+      const newBlog = await createBlogInStore(blogObject, {
+        id: user.id,
+        name: user.name,
+        username: user.username
+      })
       notify(`a new blog "${newBlog.title}" by ${newBlog.author} added`)
       navigate(`/blogs/${newBlog.id}`)
     } catch (error) {
@@ -134,7 +141,7 @@ const App = () => {
         likes: blogToUpdate.likes + 1
       })
       returnedBlog.user = blogToUpdate.user
-      setBlogs(blogs.map((blog) => (blog.id !== returnedBlog.id ? blog : returnedBlog)))
+      updateBlogInStore(returnedBlog)
     } catch (error) {
       notify('Failed to like blog', 'error')
     }
@@ -145,7 +152,7 @@ const App = () => {
 
     try {
       await blogService.remove(blogToDelete.id)
-      setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id))
+      removeBlogInStore(blogToDelete.id)
       notify(`Deleted blog: ${blogToDelete.title}`)
       navigate('/')
     } catch (error) {

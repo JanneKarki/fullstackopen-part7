@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { AppBar, Button, Container, Toolbar, Typography } from '@mui/material'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
@@ -16,17 +17,19 @@ import useNotificationStore from './stores/notificationStore'
 import useUserStore from './stores/userStore'
 
 const Navigation = ({ user, onLogout }) => (
-  <nav>
-    <Link to="/">blogs</Link> <Link to="/users">users</Link>{' '}
-    {user && <Link to="/blogs/new">new blog</Link>}{' '}
+  <AppBar position="static" sx={{ mb: 4, borderRadius: 2 }}>
+    <Toolbar>
+      <Typography variant="h5" sx={{ flexGrow: 1 }}>Blog App</Typography>
+      <Button color="inherit" component={Link} to="/">blogs</Button>
+      <Button color="inherit" component={Link} to="/users">users</Button>
+      {user && <Button color="inherit" component={Link} to="/blogs/new">new blog</Button>}
     {user ? (
-      <span>
-        {user.name} logged in <button onClick={onLogout}>logout</button>
-      </span>
+      <Button color="inherit" onClick={onLogout}>logout</Button>
     ) : (
-      <Link to="/login">login</Link>
+      <Button color="inherit" component={Link} to="/login">login</Button>
     )}
-  </nav>
+    </Toolbar>
+  </AppBar>
 )
 
 const BlogList = ({ blogs, user, onLike, onDelete }) => (
@@ -181,7 +184,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Container maxWidth="md">
       <Navigation user={user} onLogout={handleLogout} />
       {notification?.type === 'error' ? (
         <ErrorNotification message={notification.message} />
@@ -222,7 +225,7 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ErrorBoundary>
-    </div>
+    </Container>
   )
 }
 

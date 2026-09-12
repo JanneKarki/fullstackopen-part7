@@ -1,4 +1,5 @@
 import useField from '../hooks/useField'
+import { Button, TextField } from '@mui/material'
 
 const BlogForm = ({ createBlog }) => {
   const title = useField('text')
@@ -22,24 +23,25 @@ const BlogForm = ({ createBlog }) => {
       <h2>create new</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          title:{' '}
-          <input
-            data-testid="title"
+          <TextField
+            label="title"
+            inputProps={{ 'data-testid': 'title' }}
+            size="small"
             {...title.input}
           />
         </div>
         <div>
-          author:{' '}
-          <input
-            data-testid="author"
+          <TextField
+            label="author"
+            inputProps={{ 'data-testid': 'author' }}
+            size="small"
             {...author.input}
           />
         </div>
         <div>
-          url:{' '}
-          <input data-testid="url" {...url.input} />
+          <TextField label="url" inputProps={{ 'data-testid': 'url' }} size="small" {...url.input} />
         </div>
-        <button type="submit">create</button>
+        <Button type="submit" variant="contained">create</Button>
       </form>
     </div>
   )

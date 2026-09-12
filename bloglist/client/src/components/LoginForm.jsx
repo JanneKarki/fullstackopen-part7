@@ -1,4 +1,5 @@
 import useField from '../hooks/useField'
+import { Button, TextField } from '@mui/material'
 
 // Login form component
 const LoginForm = ({ onLogin }) => {
@@ -16,22 +17,22 @@ const LoginForm = ({ onLogin }) => {
     <div>
       <form onSubmit={handleSubmit}>
         <div>
-          username{' '}
-          <input
-            data-testid="username"
-            type="text"
+          <TextField
+            label="username"
+            inputProps={{ 'data-testid': 'username' }}
+            size="small"
             {...username.input}
           />
         </div>
         <div>
-          password{' '}
-          <input
-            data-testid="password"
-            type="password"
+          <TextField
+            label="password"
+            inputProps={{ 'data-testid': 'password' }}
+            size="small"
             {...password.input}
           />
         </div>
-        <button type="submit">login</button>
+        <Button type="submit" variant="contained">login</Button>
       </form>
     </div>
   )

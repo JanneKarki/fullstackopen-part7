@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Button, Card, CardContent, TextField } from '@mui/material'
 
 const Blog = ({ blog, onLike, onDelete, onComment, currentUser, singleView = false }) => {
   const [comment, setComment] = useState('')
@@ -8,14 +9,14 @@ const Blog = ({ blog, onLike, onDelete, onComment, currentUser, singleView = fal
 
   if (!singleView) {
     return (
-      <div className="blog" data-testid="blog">
+      <Card className="blog" data-testid="blog"><CardContent>
         <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}
-      </div>
+      </CardContent></Card>
     )
   }
 
   return (
-    <div className="blog" data-testid="blog">
+    <Card className="blog" data-testid="blog"><CardContent>
       <div>
         <div>{blog.title}</div>
         <div>{blog.author}</div>
@@ -23,13 +24,13 @@ const Blog = ({ blog, onLike, onDelete, onComment, currentUser, singleView = fal
       <div>{blog.url}</div>
       <div>
         likes <span data-testid="likes-count">{blog.likes}</span>{' '}
-        {currentUser && <button onClick={onLike}>like</button>}
+        {currentUser && <Button onClick={onLike} variant="outlined">like</Button>}
       </div>
       <div>{blog.user?.name}</div>
       {isOwner && (
-        <button data-testid="remove-button" onClick={onDelete}>
+        <Button data-testid="remove-button" onClick={onDelete} color="error" variant="outlined">
           remove
-        </button>
+        </Button>
       )}
       {singleView && (
         <div>
@@ -40,13 +41,14 @@ const Blog = ({ blog, onLike, onDelete, onComment, currentUser, singleView = fal
             onComment(comment.trim())
             setComment('')
           }}>
-            <input
+            <TextField
+              size="small"
               aria-label="add a comment"
               placeholder="add a comment"
               value={comment}
               onChange={(event) => setComment(event.target.value)}
             />
-            <button type="submit">add comment</button>
+            <Button type="submit" variant="contained">add comment</Button>
           </form>
           <ul>
             {(blog.comments || []).map((comment, index) => (
@@ -55,7 +57,7 @@ const Blog = ({ blog, onLike, onDelete, onComment, currentUser, singleView = fal
           </ul>
         </div>
       )}
-    </div>
+    </CardContent></Card>
   )
 }
 

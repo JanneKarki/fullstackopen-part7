@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Link, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
@@ -10,6 +10,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import useBlogStore from './stores/blogStore'
 import useNotificationStore from './stores/notificationStore'
+import useUserStore from './stores/userStore'
 
 const Navigation = ({ user, onLogout }) => (
   <nav>
@@ -74,8 +75,11 @@ const NewBlog = ({ createBlog }) => (
 )
 
 const App = () => {
-  const [user, setUser] = useState(null)
   const navigate = useNavigate()
+  const user = useUserStore((state) => state.user)
+  const initializeUser = useUserStore((state) => state.initialize)
+  const setUserInStore = useUserStore((state) => state.setUser)
+  const logoutUser = useUserStore((state) => state.logout)
   const blogs = useBlogStore((state) => state.blogs)
   const initializeBlogs = useBlogStore((state) => state.initialize)
   const createBlogInStore = useBlogStore((state) => state.createBlog)
@@ -89,20 +93,18 @@ const App = () => {
   }, [initializeBlogs])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
-    if (loggedUserJSON) {
-      const loggedUser = JSON.parse(loggedUserJSON)
-      setUser(loggedUser)
-      blogService.setToken(loggedUser.token)
-    }
-  }, [])
+    initializeUser()
+  }, [initializeUser])
+
+  useEffect(() => {
+    if (user) blogService.setToken(user.token)
+  }, [user])
 
   const handleLogin = async (credentials) => {
     try {
       const loggedUser = await loginService.login(credentials)
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(loggedUser))
+      setUserInStore(loggedUser)
       blogService.setToken(loggedUser.token)
-      setUser(loggedUser)
       navigate('/')
     } catch (error) {
       console.error('wrong credentials', error)
@@ -111,8 +113,7 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogAppUser')
-    setUser(null)
+    logoutUser()
     navigate('/')
   }
 

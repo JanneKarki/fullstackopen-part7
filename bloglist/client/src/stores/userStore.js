@@ -1,21 +1,18 @@
 import { create } from 'zustand'
-
-const storageKey = 'loggedBlogAppUser'
+import persistentUser from '../services/persistentUser'
 
 const useUserStore = create((set) => ({
   user: null,
   initialize: () => {
-    const userJSON = window.localStorage.getItem(storageKey)
-    if (userJSON) {
-      set({ user: JSON.parse(userJSON) })
-    }
+    const user = persistentUser.getUser()
+    if (user) set({ user })
   },
   setUser: (user) => {
-    window.localStorage.setItem(storageKey, JSON.stringify(user))
+    persistentUser.saveUser(user)
     set({ user })
   },
   logout: () => {
-    window.localStorage.removeItem(storageKey)
+    persistentUser.removeUser()
     set({ user: null })
   }
 }))

@@ -1,16 +1,20 @@
-import { useState } from 'react'
+import useField from '../hooks/useField'
 
 const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const title = useField('text')
+  const author = useField('text')
+  const url = useField('text')
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    createBlog({ title, author, url })
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    createBlog({
+      title: title.input.value,
+      author: author.input.value,
+      url: url.input.value
+    })
+    title.reset()
+    author.reset()
+    url.reset()
   }
 
   return (
@@ -21,21 +25,19 @@ const BlogForm = ({ createBlog }) => {
           title:{' '}
           <input
             data-testid="title"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
+            {...title.input}
           />
         </div>
         <div>
           author:{' '}
           <input
             data-testid="author"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
+            {...author.input}
           />
         </div>
         <div>
           url:{' '}
-          <input data-testid="url" value={url} onChange={({ target }) => setUrl(target.value)} />
+          <input data-testid="url" {...url.input} />
         </div>
         <button type="submit">create</button>
       </form>

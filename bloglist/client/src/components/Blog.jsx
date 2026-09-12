@@ -1,20 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, onLike, onDelete, currentUser, singleView = false }) => {
-  const [visible, setVisible] = useState(false)
+const Blog = ({ blog, onLike, onDelete, onComment, currentUser, singleView = false }) => {
+  const [comment, setComment] = useState('')
 
-  const isOwner = currentUser?.username === blog.user?.username
+  const isOwner = currentUser?.id === blog.user?.id
 
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
-
-  if (!visible && !singleView) {
+  if (!singleView) {
     return (
       <div className="blog" data-testid="blog">
         <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}
-        <button onClick={toggleVisibility}>view</button>
       </div>
     )
   }
@@ -24,7 +19,6 @@ const Blog = ({ blog, onLike, onDelete, currentUser, singleView = false }) => {
       <div>
         <div>{blog.title}</div>
         <div>{blog.author}</div>
-        {!singleView && <button onClick={toggleVisibility}>hide</button>}
       </div>
       <div>{blog.url}</div>
       <div>
@@ -36,6 +30,30 @@ const Blog = ({ blog, onLike, onDelete, currentUser, singleView = false }) => {
         <button data-testid="remove-button" onClick={onDelete}>
           remove
         </button>
+      )}
+      {singleView && (
+        <div>
+          <h3>comments</h3>
+          <form onSubmit={(event) => {
+            event.preventDefault()
+            if (!comment.trim()) return
+            onComment(comment.trim())
+            setComment('')
+          }}>
+            <input
+              aria-label="add a comment"
+              placeholder="add a comment"
+              value={comment}
+              onChange={(event) => setComment(event.target.value)}
+            />
+            <button type="submit">add comment</button>
+          </form>
+          <ul>
+            {(blog.comments || []).map((comment, index) => (
+              <li key={`${blog.id}-comment-${index}`}>{comment}</li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   )

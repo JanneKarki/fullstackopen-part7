@@ -47,7 +47,7 @@ const BlogList = ({ blogs, user, onLike, onDelete }) => (
   </div>
 )
 
-const BlogDetail = ({ blogs, user, onLike, onDelete }) => {
+const BlogDetail = ({ blogs, user, onLike, onDelete, onComment }) => {
   const { id } = useParams()
   const blog = blogs.find((blog) => blog.id === id)
 
@@ -59,6 +59,7 @@ const BlogDetail = ({ blogs, user, onLike, onDelete }) => {
       onLike={() => onLike(blog)}
       onDelete={() => onDelete(blog)}
       currentUser={user}
+      onComment={(comment) => onComment(blog, comment)}
       singleView
     />
   )
@@ -90,6 +91,7 @@ const App = () => {
   const createBlogInStore = useBlogStore((state) => state.createBlog)
   const updateBlogInStore = useBlogStore((state) => state.updateBlog)
   const removeBlogInStore = useBlogStore((state) => state.removeBlog)
+  const addCommentInStore = useBlogStore((state) => state.addComment)
   const notification = useNotificationStore((state) => state.notification)
   const notify = useNotificationStore((state) => state.notify)
 
@@ -170,6 +172,14 @@ const App = () => {
     }
   }
 
+  const handleComment = async (blog, comment) => {
+    try {
+      await addCommentInStore(blog.id, comment)
+    } catch (error) {
+      notify('Failed to add comment', 'error')
+    }
+  }
+
   return (
     <div>
       <Navigation user={user} onLogout={handleLogout} />
@@ -200,7 +210,13 @@ const App = () => {
           <Route
             path="/blogs/:id"
             element={
-              <BlogDetail blogs={blogs} user={user} onLike={handleLike} onDelete={handleDelete} />
+              <BlogDetail
+                blogs={blogs}
+                user={user}
+                onLike={handleLike}
+                onDelete={handleDelete}
+                onComment={handleComment}
+              />
             }
           />
           <Route path="*" element={<NotFound />} />

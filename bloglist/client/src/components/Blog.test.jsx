@@ -35,35 +35,28 @@ describe('Blog component', () => {
     expect(screen.getByText('Test Driven Development in React', { exact: false })).toBeDefined()
   })
 
-  test('url, likes and author after view', async () => {
+  test('url, likes and author in the detail view', () => {
     render(
       <MemoryRouter>
-        <Blog blog={blog} currentUser={currentUser} />
+        <Blog blog={blog} currentUser={currentUser} singleView />
       </MemoryRouter>
     )
-
-    const user = userEvent.setup()
-    const viewButton = screen.getByText('view')
-    await user.click(viewButton)
 
     expect(screen.getByText('http://example.com/blog')).toBeDefined()
     expect(screen.getByTestId('likes-count')).toHaveTextContent('5')
     expect(screen.getByText('Kent Beck'), { exact: false }).toBeDefined()
   })
 
-  test('clicking the button twice calls event hanlder twice', async () => {
+  test('clicking like twice calls event handler twice', async () => {
     const mockHandler = vi.fn()
 
     render(
       <MemoryRouter>
-        <Blog blog={blog} currentUser={currentUser} onLike={mockHandler} />
+        <Blog blog={blog} currentUser={currentUser} onLike={mockHandler} singleView />
       </MemoryRouter>
     )
 
     const user = userEvent.setup()
-
-    const viewButton = screen.getByText('view')
-    await user.click(viewButton)
 
     const likeButton = screen.getByText('like')
     await user.click(likeButton)

@@ -7,6 +7,7 @@ import { ErrorNotification, Notification } from './components/Notification'
 import ErrorBoundary from './components/ErrorBoundary'
 import NotFound from './components/NotFound'
 import Users from './components/Users'
+import UserView from './components/UserView'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import userService from './services/users'
@@ -195,6 +196,7 @@ const App = () => {
             element={user ? <NewBlog createBlog={createBlog} /> : <Navigate replace to="/login" />}
           />
           <Route path="/users" element={<Users users={users} />} />
+          <Route path="/users/:id" element={<UserView users={users} />} />
           <Route
             path="/blogs/:id"
             element={

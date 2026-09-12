@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
@@ -6,15 +6,18 @@ import LoginForm from './components/LoginForm'
 import { ErrorNotification, Notification } from './components/Notification'
 import ErrorBoundary from './components/ErrorBoundary'
 import NotFound from './components/NotFound'
+import Users from './components/Users'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import userService from './services/users'
 import useBlogStore from './stores/blogStore'
 import useNotificationStore from './stores/notificationStore'
 import useUserStore from './stores/userStore'
 
 const Navigation = ({ user, onLogout }) => (
   <nav>
-    <Link to="/">blogs</Link> {user && <Link to="/blogs/new">new blog</Link>}{' '}
+    <Link to="/">blogs</Link> <Link to="/users">users</Link>{' '}
+    {user && <Link to="/blogs/new">new blog</Link>}{' '}
     {user ? (
       <span>
         {user.name} logged in <button onClick={onLogout}>logout</button>
@@ -81,6 +84,7 @@ const App = () => {
   const setUserInStore = useUserStore((state) => state.setUser)
   const logoutUser = useUserStore((state) => state.logout)
   const blogs = useBlogStore((state) => state.blogs)
+  const [users, setUsers] = useState([])
   const initializeBlogs = useBlogStore((state) => state.initialize)
   const createBlogInStore = useBlogStore((state) => state.createBlog)
   const updateBlogInStore = useBlogStore((state) => state.updateBlog)
@@ -91,6 +95,10 @@ const App = () => {
   useEffect(() => {
     initializeBlogs()
   }, [initializeBlogs])
+
+  useEffect(() => {
+    userService.getAll().then(setUsers)
+  }, [])
 
   useEffect(() => {
     initializeUser()
@@ -186,6 +194,7 @@ const App = () => {
             path="/blogs/new"
             element={user ? <NewBlog createBlog={createBlog} /> : <Navigate replace to="/login" />}
           />
+          <Route path="/users" element={<Users users={users} />} />
           <Route
             path="/blogs/:id"
             element={
